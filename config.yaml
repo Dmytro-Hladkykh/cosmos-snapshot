@@ -1,0 +1,6 @@
+snapshot:
+  rpc: https://rpc.example.com
+  denom: utoken
+  height: 0
+  output: snapshot.csv
+  request_delay: 1s
