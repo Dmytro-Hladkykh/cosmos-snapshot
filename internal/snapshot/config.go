@@ -9,11 +9,13 @@ import (
 )
 
 type Config struct {
-	RPC          string        `fig:"rpc,required"`
-	Denom        string        `fig:"denom,required"`
-	Height       int64         `fig:"height"`
-	Output       string        `fig:"output,required"`
-	RequestDelay time.Duration `fig:"request_delay,required"`
+	RPC           string        `fig:"rpc,required"`
+	Denom         string        `fig:"denom,required"`
+	Height        int64         `fig:"height"`
+	Output          string        `fig:"output,required"`
+	StakingOutput   string        `fig:"staking_output,required"`
+	UnbondingOutput string        `fig:"unbonding_output,required"`
+	RequestDelay  time.Duration `fig:"request_delay,required"`
 }
 
 func NewConfig(getter kv.Getter) Config {

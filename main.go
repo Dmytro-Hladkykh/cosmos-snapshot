@@ -25,4 +25,19 @@ func main() {
 	fmt.Printf("Snapshot written to %s\n\n", cfg.Output)
 
 	snapshot.Validate(cfg, owners)
+	fmt.Println()
+
+	// Staking: delegations + rewards
+	stakingEntries := snapshot.FetchStakingSnapshot(cfg)
+	fmt.Printf("Total delegators: %d\n", len(stakingEntries))
+
+	snapshot.WriteStakingCSV(cfg.StakingOutput, stakingEntries)
+	fmt.Printf("Staking snapshot written to %s\n\n", cfg.StakingOutput)
+
+	// Unbonding delegations
+	unbondingEntries := snapshot.FetchUnbondingSnapshot(cfg)
+	fmt.Printf("Total unbonding entries: %d\n", len(unbondingEntries))
+
+	snapshot.WriteUnbondingCSV(cfg.UnbondingOutput, unbondingEntries)
+	fmt.Printf("Unbonding snapshot written to %s\n", cfg.UnbondingOutput)
 }

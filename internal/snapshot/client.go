@@ -3,12 +3,9 @@ package snapshot
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"math/big"
-	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -49,28 +46,7 @@ func FetchDenomOwners(cfg Config) []DenomOwner {
 			params.Set("pagination.key", nextKey)
 		}
 
-		endpoint := fmt.Sprintf("%s/cosmos/bank/v1beta1/denom_owners/%s?%s", cfg.RPC, cfg.Denom, params.Encode())
-		req, err := http.NewRequest(http.MethodGet, endpoint, nil)
-		if err != nil {
-			log.Fatalf("failed to build request: %v", err)
-		}
-		if cfg.Height > 0 {
-			req.Header.Set("x-cosmos-block-height", strconv.FormatInt(cfg.Height, 10))
-		}
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			log.Fatalf("request failed: %v", err)
-		}
-
-		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
-		if err != nil {
-			log.Fatalf("failed to read response body: %v", err)
-		}
-		if resp.StatusCode != http.StatusOK {
-			log.Fatalf("unexpected status %d: %s", resp.StatusCode, body)
-		}
+		body := mustGet(cfg, "/cosmos/bank/v1beta1/denom_owners/"+cfg.Denom+"?"+params.Encode())
 
 		var result denomOwnersResponse
 		if err := json.Unmarshal(body, &result); err != nil {
@@ -93,19 +69,7 @@ func FetchDenomOwners(cfg Config) []DenomOwner {
 }
 
 func fetchSupply(cfg Config) *big.Int {
-	resp, err := http.Get(cfg.RPC + "/cosmos/bank/v1beta1/supply")
-	if err != nil {
-		log.Fatalf("failed to fetch supply: %v", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("failed to read supply response: %v", err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("supply endpoint returned status %d: %s", resp.StatusCode, body)
-	}
+	body := mustGet(cfg, "/cosmos/bank/v1beta1/supply")
 
 	var result supplyResponse
 	if err := json.Unmarshal(body, &result); err != nil {

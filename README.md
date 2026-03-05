@@ -21,6 +21,8 @@ snapshot:
   denom: utoken 
   height: 0
   output: snapshot.csv
+  staking_output: staking.csv
+  unbonding_output: unbonding.csv
   request_delay: 1s
 ```
 
